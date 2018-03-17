@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>放大镜效果</title>
+    <style>
+        #box{
+            margin: 100px auto 0;
+            height: 450px;
+            width: 450px;
+            position: relative;
+            box-shadow: black 5px 5px 20px;
+        }
+        #box .boxLeft img {
+            height: 100%;
+            width: 100%;
+        }
+        #mark{
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 303.75px;
+            height: 303.75px;
+            background-color: #000;
+            opacity: 0.5;
+            -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            cursor: move;
+        }
+        #boxRight{
+            display: none;
+            height: 540px;
+            width: 540px;
+            position: absolute;
+            border: 1px solid #ccc;
+            left: 460px;
+            top: 0;
+            overflow: hidden;
+        }
+        #boxRight img{
+            display: block;
+            position: absolute;
+            left:0;
+            top:0;
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <div class="boxLeft"><img src="img/iphone.jpg" alt=""></div>
+    <div id="mark"></div>
+    <div id="boxRight">
+        <img src="img/iphone-big.jpg" alt="">
+    </div>
+</div>
+
+</body>
+<script>
+    var box = document.getElementById('box'),mark = document.getElementById('mark'),boxRight = document.getElementById('boxRight'),boxRightImg = boxRight.getElementsByTagName('img')[0]
+    box.onmouseenter = function (e) {
+        e = e || window.event;
+        mark.style.display = 'block'
+        boxRight.style.display = 'block'
+        this.markWidth = mark.offsetWidth;
+        this.markHeight = mark.offsetHeight;
+        this.mulL = boxRightImg.offsetWidth/this.offsetWidth
+        this.mulT = boxRightImg.offsetHeight/this.offsetWidth
+    }
+    box.onmousemove = function (e) {
+        e = e || window.event;
+        var left = e.clientX - this.offsetLeft - this.markWidth/2;
+        var top = e.clientY - this.offsetTop - this.markHeight/2;
+        if(left >= box.offsetWidth - this.markWidth) {
+            left = box.offsetWidth - this.markWidth;
+        }
+        if(left <= 0) {
+            left = 0
+        }
+        if(top >= box.offsetHeight - this.markHeight) {
+            top = box.offsetHeight - this.markHeight;
+        }
+        if(top <= 0) {
+            top = 0
+        }
+        mark.style.left = left + 'px';
+        mark.style.top = top + 'px';
+        boxRightImg.style.left = -left*this.mulL + 'px';
+        boxRightImg.style.top = -top*this.mulT + 'px';
+
+    }
+    box.onmouseleave = function (e) {
+        e = e || window.event;
+        mark.style.display = 'none';
+        boxRight.style.display = 'none';
+    }
+</script>
+</html>
