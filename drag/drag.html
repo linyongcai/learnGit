@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>拖拽效果</title>
+    <style>
+        *{padding: 0;margin: 0;}
+        #box{
+
+            height: 300px;
+            width: 300px;
+            background-color: #d93f30;
+            cursor: move;
+            position: fixed;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+</body>
+<script>
+    var box = document.getElementById('box');
+    function set() {
+        box.style.top = ((document.documentElement.clientHeight || document.body.clientHeight) - box.offsetHeight) / 2 + 'px';
+        box.style.left = ((document.documentElement.clientWidth || document.body.clientWidth) - box.offsetWidth) / 2 + 'px';
+    }
+    set();
+    box.onmousedown = mDown;
+    window.onresize = set;
+
+    function mDown(e) {
+        e = e || window.event;
+        this.startL = e.clientX;
+        this.startT = e.clientY;
+        this.l = parseInt(this.offsetLeft);
+        this.t = parseInt(this.offsetTop);
+        this.minL = this.minT = 0;
+        this.maxL = (document.documentElement.clientWidth || document.body.clientWidth) - box.offsetWidth;
+        this.maxT = (document.documentElement.clientHeight || document.body.clientHeight) - box.offsetHeight;
+
+        if(this.setCapture) {
+            this.setCapture();  //元素与鼠标绑定在一起
+            this.onmousemove = mMove;
+            this.onmouseup = mUp;
+        }else {
+            var _this = this;
+            document.onmousemove = function (e) {
+                mMove.call(_this,e)
+            }
+            document.onmouseup = function (e) {
+                mUp.call(_this,e)
+            }
+        }
+
+    }
+    function mMove(e) {
+        e = e || window.event;
+        var curL = this.l + (e.clientX - this.startL);
+        var curT = this.t + (e.clientY -  this.startT);
+        curL = curL < this.minL ? this.minL : (curL > this.maxL ? this.maxL : curL);
+        curT = curT < this.minT ? this.minT : (curT > this.maxT ? this.maxT : curT);
+        this.style.left = curL + 'px';
+        this.style.top = curT + 'px';
+
+    }
+    function mUp(e) {
+        if(this.releaseCapture) {
+            this.releaseCapture();  //元素与鼠标解绑
+            this.onmousemove = null;
+            this.onmouseup = null;
+        } else {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+
+    }
+</script>
+</html>
